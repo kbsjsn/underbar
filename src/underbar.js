@@ -101,11 +101,35 @@
   _.reject = function(collection, test) {
     // TIP: see if you can re-use _.filter() here, without simply
     // copying code in and modifying it
-    
+    var rejected = [];
+    var passed = _.filter(collection, test);
+    for(var element of collection) {
+      if(!passed.includes(element)) rejected.push(element);
+    }
+    return rejected;
   };
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array, isSorted, iterator) {
+    var arr = [];
+    var array2 = [];
+    if (arguments.length === 3) {
+      for(var element of array) {
+        array2.push(iterator(element));
+      }
+      for(var i = 0; i < array2.length; i++) {
+        if(!arr.includes(array2[i])) {
+          arr.push(array2[i]);
+        }
+      }
+    } else {
+      for(var i = 0; i < array.length; i++) {
+          if(!arr.includes(array[i])) {
+            arr.push(array[i]);
+          }
+      }
+    }
+    return arr;
   };
 
 
@@ -114,6 +138,11 @@
     // map() is a useful primitive iteration function that works a lot
     // like each(), but in addition to running the operation on all
     // the members, it also maintains an array of results.
+    var arr = [];
+    for(var i of collection) {
+      arr.push(iterator(i));
+    }
+    return arr;
   };
 
   /*
@@ -129,7 +158,7 @@
     // TIP: map is really handy when you want to transform an array of
     // values into a new array of values. _.pluck() is solved for you
     // as an example of this.
-    return _.map(collection, function(item){
+    return _.map(collection, function(item){    //item is the element of the array, which is an object; collection is an array of objects
       return item[key];
     });
   };
@@ -155,6 +184,20 @@
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
   _.reduce = function(collection, iterator, accumulator) {
+    var val;
+    if(arguments.length === 3) {
+      val = accumulator;
+      for(var element of collection) {
+        val = iterator(val, element);
+      }
+    } else {
+      val = collection[0];
+      for(var i = 1; i < collection.length; i++) {
+        val = iterator(val, collection[i]);
+      }
+    }
+
+    return val;
   };
 
   // Determine if the array or object contains a given value (using `===`).
@@ -272,6 +315,22 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+      var arrayCopy = array.slice(0);
+      var arrRandomInd = [];
+      var arr = [];
+      function getRandomInd(max) {
+        return Math.floor(Math.random() * max)
+      }
+      while(arrRandomInd.length !== array.length) {
+        var i = getRandomInd(array.length);
+        if(!arrRandomInd.includes(i)) {
+          arrRandomInd.push(i);
+        }
+      }
+      for(var i of arrRandomInd) {
+        arr.push(arrayCopy[i]);
+      }
+      return arr;
   };
 
 
